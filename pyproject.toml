@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "osx-setup"
 version = "0.1.0"
-description = "Installation of Hiep's MacOSX setup"
-authors = ["Hiep"]
+description = "Automated MacOS Setup and Configuration"
+authors = ["Hiep Ong"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
