@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+source ./bin/colours
+SCRIPT_NAME=ansible_osx
+clear
+
+if [ "$1" == "--remote" ]; then
+  printHeading "Syncing to remote..."
+  rsync -varchP ~/local root@server:/remote/
+else
+  printHeading "Backing Up files..."
+  ansible-playbook backup.yml  
+fi

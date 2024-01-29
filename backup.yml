@@ -1,0 +1,52 @@
+################################################################################
+# BACKUP CUSTOM FILES
+################################################################################
+---
+- name:             "Backup OS Files"
+  hosts:            localhost
+  become:           false
+  gather_facts:     false
+  vars:
+    backup_root:    "./files"
+  ##############################################################################  
+  tasks:
+    #===========================================================================
+    - name:         Backup SSH Files
+      copy:
+        src:        "~/.ssh/"
+        dest:       "{{backup_root}}/ssh/"
+        force:      true
+        remote_src: false
+                
+    #===========================================================================
+    - name:         Backup ZSH Files
+      copy:
+        src:        "{{_file}}"
+        dest:       "{{backup_root}}/zsh/"
+        force:      true
+        remote_src: false
+      loop:
+        - "~/.zshrc"
+        - "~/.zshrc.custom.before"
+        - "~/.zshrc.custom.after"
+      loop_control:
+        loop_var:   "_file"
+        label:      "Backing up... {{_file}}"
+
+    #===========================================================================
+    - name:         Other Stuff
+      copy:
+        src:        "{{_file}}"
+        dest:       "{{backup_root}}/"
+        force:      true
+        remote_src: false
+      loop:         "{{backup_files}}"
+      loop_control:
+        loop_var:   "_file"
+        label:      "Backing up... {{_file}}"      
+        
+    #===========================================================================
+    - name:         Backup Completed
+      debug:        "msg=Done!!!"
+
+    
