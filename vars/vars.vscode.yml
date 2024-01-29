@@ -1,0 +1,22 @@
+vscode:
+  extensions:
+    - apollographql.vscode-apollo
+    - bradlc.vscode-tailwindcss
+    - castwide.solargraph
+    - clinyong.vscode-css-modules
+    - eamodio.gitlens
+    - jakebecker.elixir-ls
+    - kaiwood.endwise
+    - karunamurti.haml
+    - ms-vscode-remote.vscode-remote-extensionpack
+    - ms-vscode.vscode-typescript-tslint-plugin
+    - msjsdiag.debugger-for-chrome
+    - rebornix.ruby
+    - richie5um2.vscode-sort-json
+    - Tyriar.sort-lines
+    - vscodevim.vim
+    - wholroyd.jinja
+    - wingrunr21.vscode-ruby
+    - xabikos.javascriptsnippets
+    - streetsidesoftware.code-spell-checker
+    - fabiospampinato.vscode-todo-plus    

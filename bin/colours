@@ -1,0 +1,74 @@
+################################################################################
+# Colours for neat text
+################################################################################
+function checkColourEnabled() {
+  if [ -f "/usr/bin/tput" ]; then
+    if [ "$TERM" = "dumb" ]; then
+      export TERM=xterm
+    fi
+
+    /usr/bin/tput sgr0
+    check_tput=$?
+    if [ $check_tput -eq 0 ]; then
+      return 1
+    fi
+  fi
+  return 0
+}
+
+checkColourEnabled
+checkColour=$?
+if [[ $checkColour -eq 1 ]] ; then
+  t_yellow=$(/usr/bin/tput setaf 3)
+  t_blue=$(/usr/bin/tput setaf 4)
+  t_cyan=$(/usr/bin/tput setaf 6)
+  t_green=$(/usr/bin/tput setaf 2)
+  t_red=$(/usr/bin/tput setaf 1)
+  t_reset=$(/usr/bin/tput sgr0)
+else
+  t_yellow=""
+  t_blue=""
+  t_cyan=""
+  t_green=""
+  t_red=""
+  t_reset=""
+fi
+
+################################################################################
+# Logging / Printing helper functions
+################################################################################
+
+# Prints a major section heading - use for main blocks of functionality
+printHeading() {
+  if [ "$2" == "yellow" ]; then
+    colour=${t_yellow}
+  elif [ "$2" == "red" ]; then
+    colour=${t_red}
+  elif [ "$2" == "green" ]; then
+    colour=${t_green}
+  else
+    colour=${t_cyan}
+  fi
+  
+  echo "${t_yellow}==========================================================================${t_reset}"
+  echo "${t_green}[${SCRIPT_NAME}]${colour} $1 ${t_reset}"
+  echo "${t_yellow}==========================================================================${t_reset}"
+}
+
+# Prints an error
+printError() {
+  echo "${t_green}[${SCRIPT_NAME}]${t_red} $1 ${t_reset}"
+}
+
+# Prints a single line info
+printInfo() {
+  for _var in "$@"
+  do
+    echo "${t_green}[${SCRIPT_NAME}]${t_cyan} $_var ${t_reset}"
+  done
+}
+
+# Prints a key value parameter
+printParam() {
+  echo "${t_reset}  $1 = ${t_cyan}$2${t_reset}"
+}

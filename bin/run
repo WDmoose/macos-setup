@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+################################################################################
+# This is an execution wrapper for the installation and setup. Pass in '--bootstrap'
+# on initial execution to bootstrap dependencies.
+################################################################################
+source ./bin/colours
+SCRIPT_NAME=ansible_osx
+clear
+
+################################################################################
+# MAIN
+################################################################################
+#===============================================================================
+# Remove Base Software - Homebrew & Pyenv e.g. Reset Everything
+#===============================================================================
+if [ "$1" == "--clean" ]; then
+  printHeading "UNINSTALLING DEPENDENCIES" "red"
+  
+  if [ -f "/opt/homebrew/bin/brew" ]; then
+    printInfo "Installing Homebrew [Package Manager]"
+    sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
+    echo "Removing /opt/homebrew"
+    sudo rm -rf /opt/homebrew
+  else
+    printInfo "Homebrew not detected..."
+  fi
+  
+  printInfo "Cleaning asdf"
+  rm -rf ~/.asdf
+
+  rm -rf ~/.p10k.zsh
+
+  #printHeading "Uninstalling Oh-my-zsh"
+  #sudo /bin/bash -c "$(curl -fsSL https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/uninstall.sh)"
+  #rm -rf ~/.oh-my-zsh
+  
+#===============================================================================
+# Install Required Dependencies e.g. Software Managers
+# - Install homebrew
+# - With Homebrew, install asdf, poetry
+# - With asdf install python versions
+#===============================================================================
+elif [ "$1" == "--bootstrap" ]; then
+  printHeading "BOOTSTRAPPING SYSTEM" "green"
+  
+  printHeading "Copy over ZSH Config"
+  cp ./files/zsh/.zshrc ~/ 
+  cp ./files/zsh/.zshrc.custom.before ~/ 
+  cp ./files/zsh/.zshrc.custom.after ~/ 
+  cp ./files/zsh/.p10k.zsh ~/ 
+  
+  printHeading "Installing XCode [Developer Tools]"
+  sudo ./bin/install-xcode
+  
+  printHeading "Installing Rosetta2 [x86 Emulator]"
+  sudo ./bin/install-rosetta2
+  
+  printHeading "Installing Homebrew [Package Manager]"
+  sudo ./bin/install-homebrew
+  
+  printHeading "Install asdf [Runtime Manager]"
+  brew install asdf
+  
+  printHeading "Install mas [Apple Store CLI Tool]"
+  brew install mas
+  
+  printInfo "Upgrade System Python/Pip"
+  pip3 install pip setuptools wheel virtualenv virtualenvwrapper --upgrade
+
+  printHeading "Install Python Version [Latest]"
+  asdf plugin-add python
+  asdf install python latest
+  asdf global python latest
+
+  printHeading "Install Python Version [Project]"
+  asdf plugin-add direnv
+  asdf install direnv latest
+  asdf global direnv latest
+
+  printHeading "Install Project Dependencies"
+  asdf install
+  asdf reshim python
+
+  # We could install poetry with asdf, but it's broken
+  printHeading "Install Poetry [Python Package Manager]"
+  brew install poetry
+
+  printHeading "Setting up virtualenv and dependencies"
+  poetry install --no-root
+
+  printInfo "Upgrading virtualenv packages"
+  pip3 install pip setuptools wheel --upgrade
+  
+  printInfo "Reloading Shell"
+  exec zsh
+  printHeading "Completed." "green"
+    
+#===============================================================================
+# Update the OS
+#===============================================================================
+elif [ "$1" == "--update" ]; then
+  printHeading "Updating MacOS System..."
+  sudo /usr/sbin/softwareupdate --install -all --restart
+
+#===============================================================================
+# Configure the OS
+#===============================================================================
+else
+  printHeading "Configuring MacOS..."
+  ansible-playbook osx.yml 
+fi

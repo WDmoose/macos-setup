@@ -1,0 +1,12 @@
+asdf:
+  plugins:
+    - direnv
+    - git
+    - python
+    - golang
+    #- doctl
+    #- consul
+    #- nomad
+    #- poetry
+    #- vault
+    #- terraform

@@ -1,0 +1,213 @@
+################################################################################
+# BACKUP CUSTOM FILES
+################################################################################
+---
+- name:                                "MAC OS Installation"
+  hosts:                               localhost
+  become:                              false
+  gather_facts:                        false
+  vars:
+    home:                              "/Users/{{ lookup('env', 'USER') }}"
+
+  tasks:
+    #---------------------------------------------------------------------------
+    - name:                            Read in Package Variables
+      include_vars:
+        dir:                           "./vars"
+        depth:                         1
+        extensions:
+          - 'yml'
+          - 'yaml'
+        ignore_unknown_extensions:     true
+        # This is in ansible 2.12 - will be useful. for now no merge.
+        #hash_behaviour:               "merge"
+      failed_when:                     false
+      tags:                            always
+
+    ############################################################################
+    # Homebrew
+    ############################################################################    
+    #===========================================================================
+    - name:                            'add custom homebrew repos'
+      community.general.homebrew_tap:
+        name:                          "{{homebrew.taps}}"
+      tags:
+        - homebrew
+
+    #===========================================================================
+    - name:                            Install core packages via brew casks
+      community.general.homebrew_cask:
+        name:                          "{{ _cask }}"
+      failed_when:
+        - not 'Cask installed' in _cask_install_result.msg
+        - not 'Cask already installed' in _cask_install_result.msg
+        # Indicates it was installed via another channel
+        - not 'It seems there is already' in _cask_install_result.msg
+      register:                        _cask_install_result
+      loop:                            "{{homebrew.casks}}"
+      loop_control:
+        label:                         "Install homebrew cask - {{_cask}}"
+        loop_var:                      "_cask"
+      tags:
+        - homebrew
+
+    - name:                            "Install homebrew packages"
+      community.general.homebrew:
+        name:                          "{{_package}}"
+        state:                         present
+        update_homebrew:               yes
+      register:                        _package_install_result
+      failed_when:
+        - not 'Package installed' in _package_install_result.msg
+        - not 'Package already installed' in _package_install_result.msg
+      loop:                            "{{homebrew.packages}}"
+      loop_control:
+        label:                         "Install homebrew package - {{_package}}"
+        loop_var:                      "_package"
+      tags:
+        - homebrew
+      
+    ############################################################################
+    # zshrc 
+    ############################################################################
+    - name:                            "Copy custom zshrc files"
+      copy:
+        src:                           files/zsh/{{_zshrc_file}}
+        dest:                          "{{home}}/{{_zshrc_file}}"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         true
+      loop:                            
+        - .zshrc
+        - .zshrc.custom.before
+        - .zshrc.custom.after
+      loop_control:
+        label:                         Copying over ... {{_zshrc_file}}
+        loop_var:                      _zshrc_file
+        
+      tags:
+        - zshrc 
+        - zsh
+               
+    ############################################################################
+    # Oh My ZSH
+    ############################################################################
+
+            
+    - name:                            Install Oh My ZSH
+      command:
+        cmd:                           "sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+      args:
+        creates:                       "{{home}}/.oh-my-zsh"
+      tags:
+        - zsh
+            
+    - name:                            Set ZSH as the default shell
+      shell:                           "sudo chsh -s $(which zsh) {{ lookup('env', 'USER') }}"
+      tags:
+        - zsh
+        
+    - name:                            Install Oh-My-ZSH plugins
+      command:                         
+        cmd:                           "git clone {{_zsh_plugin}}"
+        chdir:                         "$ZSH/plugins"
+      register:                        _zsh_plugin_result
+      failed_when:
+        - _zsh_plugin_result.rc > 0
+        - not 'already exists' in _zsh_plugin_result.stderr
+      loop:                            "{{zsh.plugins}}"
+      loop_control:
+        label:                         "Install oh-my-zsh theme - {{_zsh_plugin}}"
+        loop_var:                      "_zsh_plugin"
+      tags:
+        - zsh        
+                
+    - name:                            Install Oh-My-ZSH themes
+      command:                         
+        cmd:                           "git clone {{_zsh_theme}}"
+        chdir:                         "$ZSH/themes"
+      failed_when:
+        - _zsh_theme_result.rc > 0
+        - not 'already exists' in _zsh_theme_result.stderr        
+      register:                        _zsh_theme_result
+      loop:                            "{{zsh.themes}}"
+      loop_control:
+        label:                         "Install oh-my-zsh theme - {{_zsh_theme}}"
+        loop_var:                      "_zsh_theme"
+      tags:
+        - zsh
+        
+    - name:                            "Create a default ZSH configuration"
+      template:
+        src:                           templates/.zshrc.j2
+        dest:                          "{{home}}/.zshrc"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         yes
+      tags:
+        - zsh
+                
+    ############################################################################
+    # VSCode
+    ############################################################################
+    - name:                            "Install from Mac app store"
+      command:
+        cmd:                           "mas install {{ item }}"
+      loop:                            "{{app_store.ids}}"
+      tags:
+        - apps
+    
+    ############################################################################
+    # ASDF
+    ############################################################################
+    - name:                            "Create a default asdf configuration"
+      template:
+        src:                           templates/.asdfrc.j2
+        dest:                          "{{home}}/.asdfrc"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         true
+      tags:
+        - asdf
+    
+    - name:                            "Install asdf plugins"
+      command:
+        cmd:                           "asdf plugin-add {{ _asdf_plugin }}"
+      loop:                            "{{asdf.plugins}}"
+      loop_control:
+        label:                         "Install asdf plugin - {{_asdf_plugin}}"
+        loop_var:                      "_asdf_plugin"
+      tags:
+        - asdf
+            
+    ############################################################################
+    # VSCode
+    ############################################################################
+    # - name:                          Create a default VSCode configuration
+    #   template:
+    #     src:                         templates/vscode-settings.json.j2
+    #     dest:                        "{{home}}/Library/Application Support/Code/User/settings.json"
+    #     owner:                       "{{ lookup('env', 'USER') }}"
+    #     force:                       yes
+    #   tags:
+    #     - vscode
+    # 
+    # - name:                          Create a default VSCode keuybinding configuration
+    #   template:
+    #     src:                         templates/vscode-keybindings.json.j2
+    #     dest:                        "{{home}}/Library/Application Support/Code/User/keybindings.json"
+    #     owner:                       "{{ lookup('env', 'USER') }}"
+    #     force:                       yes
+    #   tags:
+    #     - vscode
+    
+    # Add something which ensures path is set here
+    - name:                            Install VSCode extensions
+      command:
+        cmd:                           "code --install-extension {{ _vscode_extension }}"
+      loop:                            "{{vscode.extensions}}"
+      loop_control:
+        label:                         "Install vscode extension - {{_vscode_extension}}"
+        loop_var:                      "_vscode_extension"      
+      tags:
+        - vscode
+
+        
+
