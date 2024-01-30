@@ -19,8 +19,6 @@
           - 'yml'
           - 'yaml'
         ignore_unknown_extensions:     true
-        # This is in ansible 2.12 - will be useful. for now no merge.
-        #hash_behaviour:               "merge"
       failed_when:                     false
       tags:                            always
 
@@ -162,8 +160,11 @@
     ############################################################################
     - name:                            "Install from Mac app store"
       command:
-        cmd:                           "mas install {{ item }}"
-      loop:                            "{{app_store.ids}}"
+        cmd:                           "mas install {{ _app.id }}"
+      loop:                            "{{app_store}}"
+      loop_control:
+        loop_var:                      "_app"
+        label:                         "Installing apple store app... {{_app.name}}"
       tags:
         - apps
     
