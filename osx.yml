@@ -221,23 +221,23 @@
     ############################################################################
     # VSCode
     ############################################################################
-    # - name:                          Create a default VSCode configuration
-    #   template:
-    #     src:                         templates/vscode-settings.json
-    #     dest:                        "{{home}}/Library/Application Support/Code/User/settings.json"
-    #     owner:                       "{{ lookup('env', 'USER') }}"
-    #     force:                       yes
-    #   tags:
-    #     - vscode
-    # 
-    # - name:                          Create a default VSCode keuybinding configuration
-    #   template:
-    #     src:                         templates/vscode-keybindings.json
-    #     dest:                        "{{home}}/Library/Application Support/Code/User/keybindings.json"
-    #     owner:                       "{{ lookup('env', 'USER') }}"
-    #     force:                       yes
-    #   tags:
-    #     - vscode
+    - name:                            Create a default VSCode configuration
+      template:
+        src:                           templates/vscode-settings.json
+        dest:                          "{{home}}/Library/Application Support/Code/User/settings.json"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         yes
+      tags:
+        - vscode
+   
+    - name:                            Create a default VSCode keuybinding configuration
+      template:
+        src:                           templates/vscode-keybindings.json
+        dest:                          "{{home}}/Library/Application Support/Code/User/keybindings.json"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         yes
+      tags:
+        - vscode
     
     # Add something which ensures path is set here
     - name:                            Install VSCode extensions
