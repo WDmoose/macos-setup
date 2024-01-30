@@ -24,8 +24,9 @@ set mouse=vi
 set nu
 
 nmap <F6> :NERDTreeToggle<CR>
-let NERDTreeMouseMode=2
 
+" Let us use the mouse with NerdTree
+let NERDTreeMouseMode=2
 augroup MouseInNERDTreeOnly
     autocmd!
     autocmd BufEnter NERD_tree_* set mouse=a

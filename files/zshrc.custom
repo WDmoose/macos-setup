@@ -1,0 +1,10 @@
+### Directories
+alias dev='cd ~/Documents/2kdev/'
+alias docs='cd ~/Documents'
+alias down='cd ~/Downloads'
+alias dropbox='cd ~/Dropbox'
+alias trantor='cd ~/Documents/2kdev/trantor/provision; source .venv/bin/activate; source scripts/env.sh;'
+alias dockerdir='cd ~/Documents/2kdev/docker/parent/docker'
+alias ldc='cd /Users/hong/Dropbox/@docs/@dev/ldc'
+alias sshconf='vim ~/.ssh/config'
+alias zshconf='source ~/.zshrc'    

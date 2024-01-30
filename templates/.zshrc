@@ -9,3 +9,6 @@ source $ZSH/oh-my-zsh.sh
 # Most ZSH config e.g. aliases etc goes here
 if [ -f ~/.zshrc.custom.after ]; then . ~/.zshrc.custom.after; fi
 
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
