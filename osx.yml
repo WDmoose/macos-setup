@@ -239,7 +239,6 @@
       tags:
         - vscode
     
-    # Add something which ensures path is set here
     - name:                            Install VSCode extensions
       command:
         cmd:                           "code --install-extension {{ _vscode_extension }}"
