@@ -1,0 +1,11 @@
+ssh_config_files:
+  - name: authorized_keys
+    mode: 600
+  - name: config
+    mode: 600
+  - name: id_rsa
+    mode: 600
+  - name: id_rsa.pub
+    mode: 644
+  - name: known_hosts
+    mode: 600

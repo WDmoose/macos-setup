@@ -44,10 +44,9 @@ elif [ "$1" == "--bootstrap" ]; then
   printHeading "BOOTSTRAPPING SYSTEM" "green"
   
   printHeading "Copy over ZSH Config"
-  cp ./files/zsh/.zshrc ~/ 
-  cp ./files/zsh/.zshrc.custom.before ~/ 
-  cp ./files/zsh/.zshrc.custom.after ~/ 
-  cp ./files/zsh/.p10k.zsh ~/ 
+  cp ./templates/.zshrc ~/ 
+  cp ./templates/.zshrc.custom.before ~/ 
+  cp ./templates/.zshrc.custom.after ~/ 
   
   printHeading "Installing XCode [Developer Tools]"
   sudo ./bin/install-xcode

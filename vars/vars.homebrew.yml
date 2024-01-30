@@ -32,6 +32,7 @@ homebrew:
     - synergy-core        # Digital KM 
     - vim                 # CLI Text Editor
     - unzip               # Archive Utility
+    - wget                # http downloader utility
     - curl                # HTTP Utility
     - openssl             # TLS Utility
     - zsh                 # Shell

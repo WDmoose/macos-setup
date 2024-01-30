@@ -10,6 +10,8 @@ alias pip=pip3
 alias python=python3
 alias ap='ansible-playbook'
 alias ag='ansible-galaxy'
+alias ld='du -hs * | sort -hr'
+alias mode='stat -f %A'
 
 ### Configurations
 alias sshconf='vim ~/.ssh/config'
