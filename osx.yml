@@ -71,7 +71,7 @@
     - name:                            "Create vim rc file"
       template:
         src:                           templates/.vimrc
-        dest:                          "{{home}}/.asdfrc"
+        dest:                          "{{home}}/.vimrc"
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         true
       tags:

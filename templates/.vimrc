@@ -10,7 +10,17 @@ call plug#begin()
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+################################################################################
+# CUSTOM SETTINGS
+################################################################################
+
+# Ensure mouse is set properly to support visual copy/paste
 set mouse=vi
+
+# Always set line numbers
+set nu
+
+nmap <F6> :NERDTreeToggle<CR>
 
 " Make sure you use single quotes
 
