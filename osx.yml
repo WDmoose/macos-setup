@@ -24,7 +24,7 @@
 
     ############################################################################
     # Homebrew
-    ############################################################################    
+    ############################################################################
     #===========================================================================
     - name:                            'add custom homebrew repos'
       community.general.homebrew_tap:
@@ -64,9 +64,9 @@
         loop_var:                      "_package"
       tags:
         - homebrew
-      
+
     ############################################################################
-    # vim 
+    # vim
     ############################################################################
     - name:                            "Create vim rc file"
       template:
@@ -76,9 +76,15 @@
         force:                         true
       tags:
         - vim
-              
+
+    - name: "Add vim-plug"
+      command:
+        cmd: "curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+      tags:
+        - vim
+        
     ############################################################################
-    # zshrc 
+    # zshrc
     ############################################################################
     - name:                            "Copy custom zshrc files"
       copy:
@@ -87,20 +93,20 @@
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         true
         remote_src:                    false
-      loop:                            
+      loop:
         - .zshrc
         - .zshrc.custom.before
         - .zshrc.custom.after
       loop_control:
         label:                         Copying over ... {{_zshrc_file}}
         loop_var:                      _zshrc_file
-        
+
       tags:
-        - zshrc 
+        - zshrc
         - zsh
-               
+
     ############################################################################
-    # zshrc 
+    # zshrc
     ############################################################################
     - name:                            "Copy SSH Keys and Config"
       copy:
@@ -116,27 +122,27 @@
       tags:
         - never # Only run when ssh is explicitly set
         - ssh
-                       
+
     ############################################################################
     # Oh My ZSH
     ############################################################################
 
-            
+
     - name:                            Install Oh My ZSH
       command:
-        cmd:                           "sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+        cmd:                           "sudo /bin/sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
       args:
         creates:                       "{{home}}/.oh-my-zsh"
       tags:
         - zsh
-            
+
     - name:                            Set ZSH as the default shell
-      shell:                           "sudo chsh -s $(which zsh) {{ lookup('env', 'USER') }}"
+      shell:                           "sudo /usr/bin/chsh -s $(which zsh) {{ lookup('env', 'USER') }}"
       tags:
         - zsh
-        
+
     - name:                            Install Oh-My-ZSH plugins
-      command:                         
+      command:
         cmd:                           "git clone {{_zsh_plugin}}"
         chdir:                         "$ZSH/plugins"
       register:                        _zsh_plugin_result
@@ -148,15 +154,15 @@
         label:                         "Install oh-my-zsh theme - {{_zsh_plugin}}"
         loop_var:                      "_zsh_plugin"
       tags:
-        - zsh        
-                
+        - zsh
+
     - name:                            Install Oh-My-ZSH themes
-      command:                         
+      command:
         cmd:                           "git clone {{_zsh_theme}}"
         chdir:                         "$ZSH/themes"
       failed_when:
         - _zsh_theme_result.rc > 0
-        - not 'already exists' in _zsh_theme_result.stderr        
+        - not 'already exists' in _zsh_theme_result.stderr
       register:                        _zsh_theme_result
       loop:                            "{{zsh.themes}}"
       loop_control:
@@ -164,14 +170,14 @@
         loop_var:                      "_zsh_theme"
       tags:
         - zsh
-        
+
     - name:                            "Create a ZSH configuration"
       template:
         src:                           templates/{{_zsh_file}}
         dest:                          "{{home}}/{{_zsh_file}}"
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         yes
-      loop:                            
+      loop:
         - .zshrc
         - .zshrc.custom.before
         - .zshrc.custom.after
@@ -182,7 +188,7 @@
         - zsh
         - zshconf
 
-                
+
     ############################################################################
     # VSCode
     ############################################################################
@@ -195,7 +201,7 @@
         label:                         "Installing apple store app... {{_app.name}}"
       tags:
         - apps
-    
+
     ############################################################################
     # ASDF
     ############################################################################
@@ -207,7 +213,7 @@
         force:                         true
       tags:
         - asdf
-    
+
     - name:                            "Install asdf plugins"
       command:
         cmd:                           "asdf plugin-add {{ _asdf_plugin }}"
@@ -217,7 +223,7 @@
         loop_var:                      "_asdf_plugin"
       tags:
         - asdf
-            
+
     ############################################################################
     # VSCode
     ############################################################################
@@ -229,7 +235,9 @@
         force:                         yes
       tags:
         - vscode
-   
+
+    # Bug - This fails on the first run becasue the directories don't exist yet
+    # you need to open vscode for the directories to be created. Do a validation of the directories.
     - name:                            Create a default VSCode keuybinding configuration
       template:
         src:                           templates/vscode-keybindings.json
@@ -238,16 +246,13 @@
         force:                         yes
       tags:
         - vscode
-    
+
     - name:                            Install VSCode extensions
       command:
         cmd:                           "code --install-extension {{ _vscode_extension }}"
       loop:                            "{{vscode.extensions}}"
       loop_control:
         label:                         "Install vscode extension - {{_vscode_extension}}"
-        loop_var:                      "_vscode_extension"      
+        loop_var:                      "_vscode_extension"
       tags:
         - vscode
-
-        
-
