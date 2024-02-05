@@ -13,6 +13,7 @@ call plug#begin()
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+
 " ##############################################################################
 " CUSTOM SETTINGS
 " ##############################################################################
@@ -22,6 +23,9 @@ set mouse=vi
 
 " Always set line numbers
 set nu
+
+" Use spaces and only 2
+set autoindent expandtab tabstop=2 shiftwidth=2
 
 nmap <F6> :NERDTreeToggle<CR>
 

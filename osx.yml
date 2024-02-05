@@ -82,12 +82,12 @@
         cmd: "curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
       tags:
         - vim
-        
+
     ############################################################################
     # zshrc
     ############################################################################
     - name:                            "Copy custom zshrc files"
-      copy:
+      template:
         src:                           templates/{{_zshrc_file}}
         dest:                          "{{home}}/{{_zshrc_file}}"
         owner:                         "{{ lookup('env', 'USER') }}"
