@@ -9,7 +9,6 @@ homebrew:
   casks:
     - iterm2              # Terminal
     - warp                # Interesting Terminal
-    - atom                # IDE
     - docker              # Containers
     - orbstack            # Docker / VM Stack
     - firefox             # Web Browser
@@ -21,16 +20,16 @@ homebrew:
     - daisydisk           # System Disk Storage Utility
     - visual-studio-code  # IDE
     - obsidian            # Digital Notebook
-    - macgpt              # Local ChatGPT
-    - secretive           # SSH Key Manager
-    - beekeeper           # Database Client
-    - raycast             # Launcher / Spotlight replacement
-    - insomnia            # Rest API Testing
-    - pieces              # Code Snippet Management
+    #- macgpt              # Local ChatGPT
+    #- secretive           # SSH Key Manager
+    #- beekeeper           # Database Client
+    #- raycast             # Launcher / Spotlight replacement
+    #- insomnia            # Rest API Testing
+    #- pieces              # Code Snippet Management
     #- krisp              # AI Powered Meeting Assistant
     #- slack              # Team Chat
   packages:
-    - synergy-core        # Digital KM 
+    - synergy-core        # Digital KM
     - vim                 # CLI Text Editor
     - unzip               # Archive Utility
     - curl                # HTTP Utility
@@ -40,3 +39,4 @@ homebrew:
     - ansible             # Language
     - jq                  # JSON Formatter
     - httpie              # Modern curl Replacement
+    - hudochenkov/sshpass/sshpass
