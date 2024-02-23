@@ -19,14 +19,12 @@
           - 'yml'
           - 'yaml'
         ignore_unknown_extensions:     true
-        # This is in ansible 2.12 - will be useful. for now no merge.
-        #hash_behaviour:               "merge"
       failed_when:                     false
       tags:                            always
 
     ############################################################################
     # Homebrew
-    ############################################################################    
+    ############################################################################
     #===========================================================================
     - name:                            'add custom homebrew repos'
       community.general.homebrew_tap:
@@ -66,60 +64,85 @@
         loop_var:                      "_package"
       tags:
         - homebrew
-      
+
     ############################################################################
-    # zshrc 
+    # vim
     ############################################################################
     - name:                            "Create vim rc file"
       template:
         src:                           templates/.vimrc
-        dest:                          "{{home}}/.asdfrc"
+        dest:                          "{{home}}/.vimrc"
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         true
       tags:
         - vim
-              
+
+    - name: "Add vim-plug"
+      command:
+        cmd: "curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+      tags:
+        - vim
+
     ############################################################################
-    # zshrc 
+    # zshrc
     ############################################################################
     - name:                            "Copy custom zshrc files"
-      copy:
-        src:                           files/zsh/{{_zshrc_file}}
+      template:
+        src:                           templates/{{_zshrc_file}}
         dest:                          "{{home}}/{{_zshrc_file}}"
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         true
-      loop:                            
+        remote_src:                    false
+      loop:
         - .zshrc
         - .zshrc.custom.before
         - .zshrc.custom.after
       loop_control:
         label:                         Copying over ... {{_zshrc_file}}
         loop_var:                      _zshrc_file
-        
+
       tags:
-        - zshrc 
+        - zshrc
         - zsh
-               
+
+    ############################################################################
+    # zshrc
+    ############################################################################
+    - name:                            "Copy SSH Keys and Config"
+      copy:
+        src:                           files/ssh/{{_ssh_file.name}}
+        dest:                          "{{home}}/.ssh/{{_ssh_file.name}}"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         true
+        mode:                          "{{_ssh_file.mode}}"
+      loop:                            "{{ssh_config_files}}"
+      loop_control:
+        label:                         Copying over ... {{_ssh_file.name}}
+        loop_var:                      _ssh_file
+      tags:
+        - never # Only run when ssh is explicitly set
+        - ssh
+
     ############################################################################
     # Oh My ZSH
     ############################################################################
 
-            
+
     - name:                            Install Oh My ZSH
       command:
-        cmd:                           "sudo sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
+        cmd:                           "sudo /bin/sh -c '$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)'"
       args:
         creates:                       "{{home}}/.oh-my-zsh"
       tags:
         - zsh
-            
+
     - name:                            Set ZSH as the default shell
-      shell:                           "sudo chsh -s $(which zsh) {{ lookup('env', 'USER') }}"
+      shell:                           "sudo /usr/bin/chsh -s $(which zsh) {{ lookup('env', 'USER') }}"
       tags:
         - zsh
-        
+
     - name:                            Install Oh-My-ZSH plugins
-      command:                         
+      command:
         cmd:                           "git clone {{_zsh_plugin}}"
         chdir:                         "$ZSH/plugins"
       register:                        _zsh_plugin_result
@@ -131,15 +154,15 @@
         label:                         "Install oh-my-zsh theme - {{_zsh_plugin}}"
         loop_var:                      "_zsh_plugin"
       tags:
-        - zsh        
-                
+        - zsh
+
     - name:                            Install Oh-My-ZSH themes
-      command:                         
+      command:
         cmd:                           "git clone {{_zsh_theme}}"
         chdir:                         "$ZSH/themes"
       failed_when:
         - _zsh_theme_result.rc > 0
-        - not 'already exists' in _zsh_theme_result.stderr        
+        - not 'already exists' in _zsh_theme_result.stderr
       register:                        _zsh_theme_result
       loop:                            "{{zsh.themes}}"
       loop_control:
@@ -147,38 +170,50 @@
         loop_var:                      "_zsh_theme"
       tags:
         - zsh
-        
-    - name:                            "Create a default ZSH configuration"
+
+    - name:                            "Create a ZSH configuration"
       template:
-        src:                           templates/.zshrc.j2
-        dest:                          "{{home}}/.zshrc"
+        src:                           templates/{{_zsh_file}}
+        dest:                          "{{home}}/{{_zsh_file}}"
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         yes
+      loop:
+        - .zshrc
+        - .zshrc.custom.before
+        - .zshrc.custom.after
+      loop_control:
+        loop_var:                      "_zsh_file"
+        label:                         "Installing zsh config {{_zsh_file}}"
       tags:
         - zsh
-                
+        - zshconf
+
+
     ############################################################################
     # VSCode
     ############################################################################
     - name:                            "Install from Mac app store"
       command:
-        cmd:                           "mas install {{ item }}"
-      loop:                            "{{app_store.ids}}"
+        cmd:                           "mas install {{ _app.id }}"
+      loop:                            "{{app_store}}"
+      loop_control:
+        loop_var:                      "_app"
+        label:                         "Installing apple store app... {{_app.name}}"
       tags:
         - apps
-    
+
     ############################################################################
     # ASDF
     ############################################################################
     - name:                            "Create a default asdf configuration"
       template:
-        src:                           templates/.asdfrc.j2
+        src:                           templates/.asdfrc
         dest:                          "{{home}}/.asdfrc"
         owner:                         "{{ lookup('env', 'USER') }}"
         force:                         true
       tags:
         - asdf
-    
+
     - name:                            "Install asdf plugins"
       command:
         cmd:                           "asdf plugin-add {{ _asdf_plugin }}"
@@ -188,38 +223,36 @@
         loop_var:                      "_asdf_plugin"
       tags:
         - asdf
-            
+
     ############################################################################
     # VSCode
     ############################################################################
-    # - name:                          Create a default VSCode configuration
-    #   template:
-    #     src:                         templates/vscode-settings.json.j2
-    #     dest:                        "{{home}}/Library/Application Support/Code/User/settings.json"
-    #     owner:                       "{{ lookup('env', 'USER') }}"
-    #     force:                       yes
-    #   tags:
-    #     - vscode
-    # 
-    # - name:                          Create a default VSCode keuybinding configuration
-    #   template:
-    #     src:                         templates/vscode-keybindings.json.j2
-    #     dest:                        "{{home}}/Library/Application Support/Code/User/keybindings.json"
-    #     owner:                       "{{ lookup('env', 'USER') }}"
-    #     force:                       yes
-    #   tags:
-    #     - vscode
-    
-    # Add something which ensures path is set here
+    - name:                            Create a default VSCode configuration
+      template:
+        src:                           templates/vscode-settings.json
+        dest:                          "{{home}}/Library/Application Support/Code/User/settings.json"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         yes
+      tags:
+        - vscode
+
+    # Bug - This fails on the first run becasue the directories don't exist yet
+    # you need to open vscode for the directories to be created. Do a validation of the directories.
+    - name:                            Create a default VSCode keuybinding configuration
+      template:
+        src:                           templates/vscode-keybindings.json
+        dest:                          "{{home}}/Library/Application Support/Code/User/keybindings.json"
+        owner:                         "{{ lookup('env', 'USER') }}"
+        force:                         yes
+      tags:
+        - vscode
+
     - name:                            Install VSCode extensions
       command:
         cmd:                           "code --install-extension {{ _vscode_extension }}"
       loop:                            "{{vscode.extensions}}"
       loop_control:
         label:                         "Install vscode extension - {{_vscode_extension}}"
-        loop_var:                      "_vscode_extension"      
+        loop_var:                      "_vscode_extension"
       tags:
         - vscode
-
-        
-

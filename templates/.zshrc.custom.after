@@ -1,0 +1,4 @@
+################################################################################
+# This file is loaded after on-my-zsh, so set everything else you need/want.
+################################################################################
+{{lookup('file', 'files/zshrc.custom', errors='ignore')}}

@@ -1,5 +1,9 @@
 app_store:
-  ids:
-    - 526298438   # Lightshot
-    - 441258766   # Magnet
-    - 1518425043  # Boop
+  # The name is just for display purposes and can be anything, the is the 
+  # important bit that corresponds to the apple store id of the app.
+  - name: Lightshot
+    id:  526298438
+  - name: Magnet
+    id:  441258766
+  - name: Boop
+    id:  1518425043

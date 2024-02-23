@@ -8,4 +8,3 @@ zsh:
   # git repo name of the theme
   themes:
     - https://github.com/romkatv/powerlevel10k.git
-
