@@ -19,7 +19,7 @@
           - 'yml'
           - 'yaml'
         ignore_unknown_extensions:     true
-      failed_when:                     false
+      #failed_when:                     false
       tags:                            always
 
     ############################################################################
