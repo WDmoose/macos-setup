@@ -8,18 +8,22 @@ homebrew:
     #- weaveworks/tap
   casks:
     - iterm2              # Terminal
-    - warp                # Interesting Terminal
-    - docker              # Containers
-    - orbstack            # Docker / VM Stack
     - firefox             # Web Browser
     - google-chrome       # Web Browser
-    - dropbox             # Cloud Storage
-    - gitkraken           # Git Client
     - pdf-expert          # PDF Reader / Editor
     - spotify             # Music Player
     - daisydisk           # System Disk Storage Utility
-    - visual-studio-code  # IDE
-    - obsidian            # Digital Notebook
+
+    
+
+    ### Tech Appz 
+    # - docker              # Containers
+    # - orbstack            # Docker / VM Stack
+    # - gitkraken           # Git Client
+    # - visual-studio-code  # IDE
+
+    ### Other Appz 
+    #- warp                # Interesting Terminal
     #- macgpt              # Local ChatGPT
     #- secretive           # SSH Key Manager
     #- beekeeper           # Database Client
@@ -28,6 +32,10 @@ homebrew:
     #- pieces              # Code Snippet Management
     #- krisp              # AI Powered Meeting Assistant
     #- slack              # Team Chat
+    #- obsidian            # Digital Notebook
+
+
+    
   packages:
     - synergy-core        # Digital KM
     - vim                 # CLI Text Editor
