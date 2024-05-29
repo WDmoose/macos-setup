@@ -47,5 +47,5 @@ homebrew:
     - bash                # Shell
     - ansible             # Language
     - jq                  # JSON Formatter
-    - httpie              # Modern curl Replacement
-    - hudochenkov/sshpass/sshpass
+  # - httpie              # Modern curl Replacement
+  # - hudochenkov/sshpass/sshpass
