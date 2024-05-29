@@ -3,7 +3,7 @@ app_store:
   # important bit that corresponds to the apple store id of the app.
   - name: Lightshot
     id:  526298438
-  - name: Magnet
-    id:  441258766
-  - name: Boop
-    id:  1518425043
+#  - name: Magnet
+#    id:  441258766
+#  - name: Boop
+#    id:  1518425043
