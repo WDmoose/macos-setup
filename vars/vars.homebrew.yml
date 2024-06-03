@@ -6,6 +6,7 @@ homebrew:
     #- heroku/brew
     #- thoughtbot/formulae
     #- weaveworks/tap
+    
   casks:
     - iterm2              # Terminal
     - firefox             # Web Browser
@@ -13,7 +14,11 @@ homebrew:
     - pdf-expert          # PDF Reader / Editor
     - spotify             # Music Player
     - daisydisk           # System Disk Storage Utility
-
+    - tresorit            # Storage
+    - 1password           # Password manager
+    - whatsapp            # Messaging
+    - nordvpn             # VPN
+    - virtualbox          # VM host
     
 
     ### Tech Appz 
