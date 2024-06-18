@@ -8,18 +8,21 @@ homebrew:
     #- weaveworks/tap
     
   casks:
+    ### Main Apps
     - iterm2              # Terminal
     - firefox             # Web Browser
     - google-chrome       # Web Browser
     - pdf-expert          # PDF Reader / Editor
     - spotify             # Music Player
-    - daisydisk           # System Disk Storage Utility
     - tresorit            # Storage
     - 1password           # Password manager
     - whatsapp            # Messaging
     - nordvpn             # VPN
     - virtualbox          # VM host
-    
+
+    ### Utilities
+    - rectangle           # Window Mgmt Snap Tool
+    - daisydisk           # System Disk Storage Utility
 
     ### Tech Appz 
     # - docker              # Containers
@@ -35,11 +38,9 @@ homebrew:
     #- raycast             # Launcher / Spotlight replacement
     #- insomnia            # Rest API Testing
     #- pieces              # Code Snippet Management
-    #- krisp              # AI Powered Meeting Assistant
-    #- slack              # Team Chat
+    #- krisp               # AI Powered Meeting Assistant
+    #- slack               # Team Chat
     #- obsidian            # Digital Notebook
-
-
     
   packages:
     - synergy-core        # Digital KM
